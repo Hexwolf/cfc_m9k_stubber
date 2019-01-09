@@ -7,7 +7,7 @@ function CFC_M9k_Stubber.registerStub( stub )
 end
 
 -- Load our stubs
-local packs = { "m9k_heavy_weapons", "m9k_small_arms_pack", "m9k_specialties", "m9k_assault_rifles"}
+local packs = {"m9k_heavy_weapons", "m9k_small_arms_pack", "m9k_specialties", "m9k_assault_rifles"}
 
 for _, pack in pairs(packs) do
     local packPath = "cfc_m9k_stubber/stubs/" .. pack .. "/"
@@ -18,6 +18,7 @@ for _, pack in pairs(packs) do
     for _, stub in next, stubs do
         if stub then
             local stubPath = packPath .. stub .. ".lua"
+            print( "[M9k Stubber] Loading " .. stubPath .. "..." )
 
             include( stubPath )
         end
@@ -26,24 +27,28 @@ end
 
 local function m9kIsLoaded()
     -- "m9k_winchester73" is the last weapon listed alphabetically in the last pack defined, so it'll likely be the last one loaded?
+    -- in any case it shouldn't matter too much. they're all loaded within ms of eachother
     return weapons.GetStored("m9k_winchester73") != nil
 end
 
 local function runStubs()
+    print("[M9k Stubber] Running stubs!")
     for _, stub in pairs(stubQueue) do
         stub()
     end
 end
 
 local function handleWaiterTimeout()
-    print("oops")
+    print("[M9k Stubber] Waiter timed out! Not running stubs!")
 end
 
 local waiterLoaded = Waiter
 
 if waiterLoaded then
+    print("[M9k Stubber] Waiter is loaded, registering with it!")
     Waiter.waitFor( m9kIsLoaded, runStubs, handleWaiterTimeout )
 else
+    print("[M9k Stubber] Waiter is not loaded! Inserting our struct into the queue!")
     WaiterQueue = WaiterQueue or {}
 
     local struct = {}
