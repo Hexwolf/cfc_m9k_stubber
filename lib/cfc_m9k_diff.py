@@ -5,14 +5,17 @@ M9K_FOLDER_PREFIX = 'm9k_'
 
 THIS_DIR = os.path.abspath('.')
 
-LUA_HEADER = 'if SERVER then AddCSLuaFile() end\n\n'
+LUA_HEADER =  'if SERVER then AddCSLuaFile() end\n\n'
+LUA_HEADER += 'CFC_M9k_stubber.registerStub(function()\n'
+
+LUA_FOOTER = 'end)'
 
 OUTPUT_DIR = 'test'
 
-SENT_FIRST_LINE = 'local sent = scripted_ents.GetStored("{}").t\n'
-SENT_VAR_LINES  = 'sent.{} = {}\n'
-WEP_FIRST_LINE  = 'local weapon = weapons.GetStored("{}")\n'
-WEP_VAR_LINES   = 'weapon.{} = {}\n'
+SENT_FIRST_LINE = '    local sent = scripted_ents.GetStored("{}").t\n'
+SENT_VAR_LINES  = '    sent.{} = {}\n'
+WEP_FIRST_LINE  = '    local weapon = weapons.GetStored("{}")\n'
+WEP_VAR_LINES   = '    weapon.{} = {}\n'
 
 
 def safe_file_open(filename, mode='r'):
@@ -39,7 +42,7 @@ def is_lua_file(filename):
 
 def get_key_value_from_line(line):
     split = line.split('=')
-    if len(split) < 2 or not line.startswith('SWEP'):
+    if len(split) < 2 or not (line.startswith('SWEP') or line.startswith('ENT')):
         return None, None
 
     key = split[0].strip().replace("SWEP.", "")
@@ -163,6 +166,8 @@ def write_weapon_or_ent_to_lua(file_ref, name, item):
 
     file_ref.write(contents)
 
+    file_ref.write(LUA_FOOTER)
+
 
 def safe_create_folder(folder):
     try:
@@ -187,8 +192,10 @@ def create_pack_folder(name):
     wep_dir = '{}{}{}'.format(pack_path, os.sep, 'weapons')
 
     safe_create_folder(pack_path)
-    safe_create_folder(ent_dir)
-    safe_create_folder(wep_dir)
+
+    # To be used if we decide to separate weapons/ents
+    #safe_create_folder(ent_dir)
+    #safe_create_folder(wep_dir)
 
     return pack_path
 
@@ -199,7 +206,8 @@ def write_pack_to_lua(name, pack):
     for key in pack:
         item = pack[key]
 
-        filename = '{}{}{}{}{}.lua'.format(pack_path, os.sep, item['item_type'], os.sep, key)
+        #filename = '{}{}{}{}{}.lua'.format(pack_path, os.sep, item['item_type'], os.sep, key)
+        filename = '{}{}{}.lua'.format(pack_path, os.sep, key)
         file = safe_file_open(filename, 'w')
         if not file:
             continue
