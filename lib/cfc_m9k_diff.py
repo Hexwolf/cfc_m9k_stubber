@@ -6,7 +6,7 @@ M9K_FOLDER_PREFIX = 'm9k_'
 THIS_DIR = os.path.abspath('.')
 
 LUA_HEADER =  'if SERVER then AddCSLuaFile() end\n\n'
-LUA_HEADER += 'CFC_M9k_stubber.registerStub(function()\n'
+LUA_HEADER += 'CFC_M9k_Stubber.registerStub(function()\n'
 
 LUA_FOOTER = 'end)'
 
@@ -45,7 +45,11 @@ def get_key_value_from_line(line):
     if len(split) < 2 or not (line.startswith('SWEP') or line.startswith('ENT')):
         return None, None
 
-    key = split[0].strip().replace("SWEP.", "")
+    if split[0].find('SWEP.') >= 0:
+        key = split[0].strip().replace("SWEP.", "")
+    elif split[0].find('ENT.') >= 0:
+        key = split[0].strip().replace("ENT.", "")
+
     value = split[1]
 
     index = value.find('--')
