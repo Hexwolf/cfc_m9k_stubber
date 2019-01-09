@@ -6,20 +6,20 @@ function CFC_M9k_Stubber.registerStub( stub )
     table.insert( stubQueue, stub )
 end
 
--- Load our sweps
+-- Load our stubs
 local packs = { "m9k_heavy_weapons", "m9k_small_arms_pack", "m9k_specialties", "m9k_assault_rifles"}
 
 for _, pack in pairs(packs) do
-    local packPath = "m9k_stubber/sweps/" .. pack .. "/"
+    local packPath = "cfc_m9k_stubber/stubs/" .. pack .. "/"
 
-    -- List all sweps in the packs folder, sorted by names ascending
-    local sweps, _ = file.Find( packPath .. "*.lua", "LUA", "nameasc" )
+    -- List all stubs in the packs folder, sorted by names ascending
+    local stubs, _ = file.Find( packPath .. "*.lua", "LUA", "nameasc" )
 
-    for _, swep in next, sweps do
-        if swep then
-            local swepPath = packPath .. swep .. ".lua"
+    for _, stub in next, stubs do
+        if stub then
+            local stubPath = packPath .. stub .. ".lua"
 
-            include( swepPath )
+            include( stubPath )
         end
     end
 end
