@@ -1,6 +1,6 @@
 Relies on cfc_waiter: https://github.com/CFC-Servers/cfc_waiter
 
-Allows for the stubbing of almost all properties on M9k without having to actually modify the m9k files directly.
+Allows for the stubbing of almost all properties on M9k without having to actually modify the M9k files directly.
 
 One can create the stub files in `lua/cfc_m9k_stubber/stubs/<pack>/<weapon_name>.lua` (see below for example).
 
